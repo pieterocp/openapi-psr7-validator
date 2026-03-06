@@ -135,4 +135,29 @@ final class PathParametersTest extends TestCase
         $validator->validate($request);
         $this->addToAssertionCount(1);
     }
+
+    public function testUnionPathOfIntegerAndStringUuid(): void
+    {
+        $specFile  = __DIR__ . '/../stubs/pathParams.yaml';
+        $request   = new ServerRequest('get', '/integerAndUuidUnion/12345678-1234-5678-1234-567812345678');
+        $validator = (new ValidatorBuilder())->fromYamlFile($specFile)->getServerRequestValidator();
+
+        $validator->validate($request);
+        $this->addToAssertionCount(1);
+
+        $request = new ServerRequest('get', '/integerAndUuidUnion/1');
+
+        $validator->validate($request);
+        $this->addToAssertionCount(1);
+    }
+
+    public function testUnionValidationHandlesBothCases(): void
+    {
+        $specFile  = __DIR__ . '/../stubs/pathParams.yaml';
+        $request   = new ServerRequest('get', '/integerAndUuidUnion/regular-string');
+        $validator = (new ValidatorBuilder())->fromYamlFile($specFile)->getServerRequestValidator();
+
+        $this->expectException(InvalidPath::class);
+        $validator->validate($request);
+    }
 }

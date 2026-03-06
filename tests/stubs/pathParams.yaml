@@ -160,3 +160,22 @@ paths:
       responses:
         204:
           description: No reponse
+  /integerAndUuidUnion/{uuidOrInt}:
+    parameters:
+      - description: "should be an int or a uuid"
+        in: "path"
+        name: "uuidOrInt"
+        required: true
+        schema:
+          oneOf:
+            - type: "integer"
+              description: "Integer identifier"
+            - type: "string"
+              format: uuid
+              description: "UUID identifier"
+    get:
+      summary: Read data
+      operationId: read
+      responses:
+        204:
+          description: No response
