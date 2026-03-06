@@ -139,7 +139,7 @@ class MultipartValidator implements MessageValidator
                     $headerValue  = $part->getHeader($headerName);
 
                     if ($headerValue === null) {
-                        throw InvalidHeaders::becauseOfMissingRequiredHeaderMupripart($partName, $headerName, $addr);
+                        throw InvalidHeaders::becauseOfMissingRequiredHeaderMultipart($partName, $headerName, $addr);
                     }
 
                     $header = SerializedParameter::fromSpec($headerSpec);

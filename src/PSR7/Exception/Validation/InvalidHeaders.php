@@ -19,7 +19,7 @@ class InvalidHeaders extends AddressValidationFailed
         return $exception;
     }
 
-    public static function becauseOfMissingRequiredHeaderMupripart(
+    public static function becauseOfMissingRequiredHeaderMultipart(
         string $partName,
         string $headerName,
         OperationAddress $address
@@ -28,6 +28,17 @@ class InvalidHeaders extends AddressValidationFailed
         $exception->message = sprintf('Missing required header "%s" for %s in multipart "%s"', $headerName, $address, $partName);
 
         return $exception;
+    }
+
+    /** @deprecated */
+    public static function becauseOfMissingRequiredHeaderMupripart(
+        string $partName,
+        string $headerName,
+        OperationAddress $address
+    ): self {
+        trigger_error('use becauseOfMissingRequiredHeaderMultipart instead', E_USER_DEPRECATED);
+
+        return self::becauseOfMissingRequiredHeaderMultipart($partName, $headerName, $address);
     }
 
     public static function becauseValueDoesNotMatchSchema(string $headerName, string $headerValue, OperationAddress $address, SchemaMismatch $prev): self
