@@ -150,7 +150,7 @@ paths:
   /multipart-deserialization:
     post:
       summary: Post multipart body
-      operationId: post-multipart-body-deserializtion
+      operationId: post-multipart-body-deserialization
       requestBody:
         content:
           multipart/form-data:

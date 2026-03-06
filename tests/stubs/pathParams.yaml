@@ -93,7 +93,7 @@ paths:
       operationId: read-array-int
       responses:
         204:
-          description: No reponse
+          description: No response
   /arrayLabel/{id}:
     parameters:
       - name: id
@@ -109,7 +109,7 @@ paths:
       operationId: read-array-int-label
       responses:
         204:
-          description: No reponse
+          description: No response
   /arrayLabelExploded/{id}:
     parameters:
       - name: id
@@ -126,7 +126,7 @@ paths:
       operationId: read-array-int-label-explode
       responses:
         204:
-          description: No reponse
+          description: No response
   /arrayMatrix/{id}:
     parameters:
       - name: id
@@ -142,7 +142,7 @@ paths:
       operationId: read-array-int-matrix
       responses:
         204:
-          description: No reponse
+          description: No response
   /arrayMatrixExploded/{id}:
     parameters:
       - name: id
@@ -159,4 +159,4 @@ paths:
       operationId: read-array-int-matrix
       responses:
         204:
-          description: No reponse
+          description: No response

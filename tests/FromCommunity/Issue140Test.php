@@ -29,7 +29,7 @@ final class Issue140Test extends BaseValidatorTest
     "paths": {
         "/api/list": {
             "get": {
-                "summary": "Get a list filtred by ids",
+                "summary": "Get a list filtered by ids",
                 "parameters": [
                     {
                         "name": "id",
