@@ -14,6 +14,7 @@ use League\OpenAPIValidation\Schema\Exception\TypeMismatch;
 use Respect\Validation\Validator;
 use Throwable;
 
+use function count;
 use function explode;
 use function in_array;
 use function is_array;
@@ -34,6 +35,7 @@ use function strtolower;
 use function substr;
 
 use const JSON_ERROR_NONE;
+use const PHP_INT_MAX;
 
 final class SerializedParameter
 {
@@ -117,9 +119,67 @@ final class SerializedParameter
             return $decodedValue;
         }
 
-        $value = $this->castToSchemaType($value, $this->schema->type);
+        $type = $this->schema->type;
+
+        // For union schemas (oneOf/anyOf) without a top-level type, try casting
+        // against each sub-schema type and pick the best match.
+        if ($type === null && is_scalar($value)) {
+            $subSchemas = $this->schema->oneOf ?? $this->schema->anyOf ?? [];
+            if (count($subSchemas) > 0) {
+                return $this->castToUnionType($value, $subSchemas);
+            }
+        }
+
+        $value = $this->castToSchemaType($value, $type);
 
         return $value;
+    }
+
+    /**
+     * Try casting a scalar value against each sub-schema type and return the best match.
+     * "Best match" means the cast that actually changed the PHP type, preferring
+     * more specific types: boolean > integer > number. If no cast changes the value,
+     * the original value is returned unchanged.
+     *
+     * @param mixed        $value
+     * @param CebeSchema[] $subSchemas
+     *
+     * @return mixed
+     */
+    private function castToUnionType($value, array $subSchemas)
+    {
+        // Priority: lower number = more specific/preferred
+        $typePriority = [
+            CebeType::BOOLEAN => 0,
+            CebeType::INTEGER => 1,
+            CebeType::NUMBER  => 2,
+        ];
+
+        $bestValue    = $value;
+        $bestPriority = PHP_INT_MAX;
+
+        foreach ($subSchemas as $subSchema) {
+            $subType = $subSchema->type ?? null;
+            if ($subType === null || $subType === CebeType::STRING) {
+                continue;
+            }
+
+            $casted = $this->castToSchemaType($value, $subType);
+            if ($casted === $value) {
+                // Cast did not change the value; this type doesn't match
+                continue;
+            }
+
+            $priority = $typePriority[$subType] ?? PHP_INT_MAX - 1;
+            if ($priority >= $bestPriority) {
+                continue;
+            }
+
+            $bestPriority = $priority;
+            $bestValue    = $casted;
+        }
+
+        return $bestValue;
     }
 
     private function isJsonContentType(): bool
